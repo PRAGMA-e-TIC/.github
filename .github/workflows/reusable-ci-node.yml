@@ -1,0 +1,110 @@
+# Workflow réutilisable — CI Node / Next.js (lint + tests)
+#
+# Usage dans un repo applicatif :
+#
+# jobs:
+#   ci:
+#     uses: pragma-e-tic/.github/.github/workflows/reusable-ci-node.yml@main
+#     with:
+#       node-version: "20"
+#       run-tests: true
+
+name: CI Node (réutilisable)
+
+on:
+  workflow_call:
+    inputs:
+      node-version:
+        description: "Version Node (ex: 20)"
+        type: string
+        required: false
+        default: "20"
+      package-manager:
+        description: "npm | pnpm | yarn"
+        type: string
+        required: false
+        default: "pnpm"
+      run-tests:
+        description: "Lancer les tests Vitest"
+        type: boolean
+        required: false
+        default: true
+      run-build:
+        description: "Lancer le build de production"
+        type: boolean
+        required: false
+        default: true
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node ${{ inputs.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node-version }}
+
+      - name: Setup pnpm
+        if: inputs.package-manager == 'pnpm'
+        uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+
+      - name: Cache deps
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node-version }}
+          cache: ${{ inputs.package-manager }}
+
+      - name: Install
+        run: ${{ inputs.package-manager }} install
+
+      - name: ESLint
+        run: ${{ inputs.package-manager }} run lint
+
+      - name: TypeScript
+        run: ${{ inputs.package-manager }} run typecheck
+
+  test:
+    needs: lint
+    if: ${{ inputs.run-tests }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node-version }}
+
+      - name: Setup pnpm
+        if: inputs.package-manager == 'pnpm'
+        uses: pnpm/action-setup@v4
+
+      - name: Install
+        run: ${{ inputs.package-manager }} install
+
+      - name: Vitest
+        run: ${{ inputs.package-manager }} run test -- --run
+
+  build:
+    needs: lint
+    if: ${{ inputs.run-build }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node-version }}
+
+      - name: Setup pnpm
+        if: inputs.package-manager == 'pnpm'
+        uses: pnpm/action-setup@v4
+
+      - name: Install
+        run: ${{ inputs.package-manager }} install
+
+      - name: Build
+        run: ${{ inputs.package-manager }} run build

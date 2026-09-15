@@ -1,0 +1,19 @@
+# Système
+.DS_Store
+Thumbs.db
+
+# Éditeurs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Local
+*.local
+.env
+.env.*
+!.env.example
+
+# Mode opératoire interne — ce dépôt est public et org-wide, il présente
+# l'organisation. Le runbook de bootstrap n'y a pas sa place.
+PUSH.md

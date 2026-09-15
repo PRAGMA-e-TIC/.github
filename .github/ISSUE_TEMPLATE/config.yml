@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Question sécurité
+    url: https://github.com/pragma-e-tic/.github/blob/main/.github/SECURITY.md
+    about: Pour signaler une vulnérabilité, merci d'utiliser la procédure dédiée (pas d'issue publique).
+  - name: Discussion générale
+    url: mailto:daniel.richard@pragma-e-tic.com
+    about: Pour les questions hors-scope d'un repo précis.

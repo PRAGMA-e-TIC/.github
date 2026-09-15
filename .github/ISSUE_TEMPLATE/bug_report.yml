@@ -1,0 +1,70 @@
+name: Bug
+description: Signaler un comportement incorrect dans un projet PRAGMA-e-TIC.
+title: "[bug] "
+labels: ["bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Merci de prendre le temps de signaler ce bug. Plus le rapport est précis, plus vite il sera corrigé.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Décris le bug en quelques phrases.
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Étapes de reproduction
+      description: Liste précise des étapes qui mènent au bug.
+      placeholder: |
+        1. ...
+        2. ...
+        3. ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Comportement attendu
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Comportement observé
+      description: Inclure logs, captures d'écran, traces si possible.
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: Version du logiciel / commit / tag concerné.
+    validations:
+      required: true
+
+  - type: input
+    id: env
+    attributes:
+      label: Environnement
+      description: OS, navigateur, version de Python / Node, etc.
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Vérifications
+      options:
+        - label: J'ai cherché dans les issues existantes et ce bug n'est pas déjà signalé.
+          required: true
+        - label: Si c'est un problème de sécurité, je le signale via SECURITY.md et non ici.
+          required: true

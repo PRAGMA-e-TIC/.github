@@ -1,0 +1,62 @@
+# Workflow réutilisable — Déploiement sur VPS OVH via SSH
+#
+# Pré-requis dans le repo appelant :
+# - Secret OVH_DEPLOY_HOST       (ex: dev.pragma-e-tic.com)
+# - Secret OVH_DEPLOY_USER       (ex: deploy)
+# - Secret OVH_DEPLOY_SSH_KEY    (clé SSH privée, format OpenSSH)
+# - Variable APP_PATH            (chemin sur le VPS, ex: /opt/pragma/api)
+#
+# Usage :
+#
+# jobs:
+#   deploy:
+#     uses: pragma-e-tic/.github/.github/workflows/reusable-deploy-ovh.yml@main
+#     with:
+#       image-tag: ${{ github.sha }}
+#     secrets: inherit
+
+name: Deploy OVH (réutilisable)
+
+on:
+  workflow_call:
+    inputs:
+      image-tag:
+        description: "Tag de l'image à déployer"
+        type: string
+        required: true
+      compose-file:
+        description: "Nom du fichier compose à utiliser"
+        type: string
+        required: false
+        default: "docker-compose.yml"
+    secrets:
+      OVH_DEPLOY_HOST:
+        required: true
+      OVH_DEPLOY_USER:
+        required: true
+      OVH_DEPLOY_SSH_KEY:
+        required: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: prod
+    steps:
+      - name: Configurer la clé SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.OVH_DEPLOY_SSH_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -H "${{ secrets.OVH_DEPLOY_HOST }}" >> ~/.ssh/known_hosts
+
+      - name: Pull + redémarrage du compose
+        env:
+          IMAGE_TAG: ${{ inputs.image-tag }}
+          COMPOSE_FILE: ${{ inputs.compose-file }}
+        run: |
+          ssh "${{ secrets.OVH_DEPLOY_USER }}@${{ secrets.OVH_DEPLOY_HOST }}" \
+            "cd ${{ vars.APP_PATH }} && \
+             export IMAGE_TAG=$IMAGE_TAG && \
+             docker compose -f $COMPOSE_FILE pull && \
+             docker compose -f $COMPOSE_FILE up -d && \
+             docker image prune -f"
