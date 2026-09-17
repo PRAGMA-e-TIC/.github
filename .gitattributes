@@ -1,0 +1,10 @@
+# Normalisation portée par le dépôt, pas par la configuration du poste.
+# Ce repo est public : un contributeur en `core.autocrlf=false` pousserait des
+# workflows en CRLF, que GitHub Actions refuse d'interpréter proprement.
+
+* text=auto eol=lf
+
+# Aucun binaire attendu ici — si l'on en ajoute un jour (logo d'organisation,
+# capture dans le profil), le déclarer explicitement.
+*.png binary
+*.jpg binary
