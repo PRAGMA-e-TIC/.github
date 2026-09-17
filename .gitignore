@@ -14,6 +14,6 @@ Thumbs.db
 .env.*
 !.env.example
 
-# Mode opératoire interne — ce dépôt est public et org-wide, il présente
-# l'organisation. Le runbook de bootstrap n'y a pas sa place.
-PUSH.md
+# Pas de règle pour le runbook de bootstrap : il ne vit pas ici. Il est remonté
+# dans le patrimoine, en ../../PUSH_dot-github.md, où il est versionné — un
+# fichier ignoré dans un dossier ignoré n'a d'historique nulle part.
